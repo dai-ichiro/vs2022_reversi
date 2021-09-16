@@ -1,0 +1,332 @@
+﻿namespace reversi;
+
+class Board
+{
+    private static int LEFT = 1;
+    private static int UPPER_LEFT = 2;
+    private static int UPPER = 4;
+    private static int UPPER_RIGHT = 8;
+    private static int RIGHT = 16;
+    private static int LOWER_RIGHT = 32;
+    private static int LOWER = 64;
+    private static int LOWER_LEFT = 128;
+
+    public int[][] rawboard;
+    public int[][] MovableDir;
+    public bool[][] MovablePos;
+
+    public int Tunrs;
+    public int CurrentColor;
+
+    public Board()
+    {
+        rawboard = new int[8][];
+        MovableDir = new int[8][];
+        MovablePos = new bool[8][];
+
+        foreach (int i in Enumerable.Range(0, 8))
+        {
+            rawboard[i] = new int[8];
+            MovableDir[i] = new int[8];
+            MovablePos[i] = new bool[8];
+        }
+
+        rawboard[3][3] = -1;
+        rawboard[4][4] = -1;
+        rawboard[3][4] = 1;
+        rawboard[4][3] = 1;
+
+        Tunrs = 0;
+        CurrentColor = 1;
+
+        updateMovable();
+    }
+    private void updateMovable()
+    {
+        foreach(int i in Enumerable.Range(0, 8))
+        {
+            foreach(int j in Enumerable.Range(0, 8))
+            {
+                MovablePos[i][j] = false;
+                int dir = checkMobility(i, j, CurrentColor);
+                MovableDir[i][j] = dir;
+                if (dir != 0)
+                {
+                    MovablePos[i][j] = true;
+                }
+            }
+        }
+    }
+
+    private int checkMobility(int x , int y, int color)
+    {
+        int x_tmp, y_tmp;
+        int dir = 0;
+
+        //すでに石があればダメ
+        if (rawboard[x][y] != 0) return dir;
+
+        //右
+        if(y < 6 && rawboard[x][y+1] == -color)
+        {
+            x_tmp = x;
+            y_tmp = y + 2;
+
+            while(y_tmp < 7 && rawboard[x_tmp][y_tmp] == -color)
+            {
+                y_tmp += 1;
+            }
+
+            if(rawboard[x_tmp][y_tmp] == color)
+            {
+                dir = dir | RIGHT;
+            }
+        }
+
+        //左
+        if (y > 1 && rawboard[x][y - 1] == -color)
+        {
+            x_tmp = x;
+            y_tmp = y - 2;
+
+            while (y_tmp >0 && rawboard[x_tmp][y_tmp] == -color)
+            {
+                y_tmp -= 1;
+            }
+
+            if (rawboard[x_tmp][y_tmp] == color)
+            {
+                dir = dir | LEFT;
+            }
+        }
+
+        //上
+        if (x > 1 && rawboard[x - 1][y] == -color)
+        {
+            x_tmp = x - 2;
+            y_tmp = y;
+
+            while (x_tmp > 0 && rawboard[x_tmp][y_tmp] == -color)
+            {
+                x_tmp -= 1;
+            }
+
+            if (rawboard[x_tmp][y_tmp] == color)
+            {
+                dir = dir | UPPER;
+            }
+        }
+
+        //下
+        if (x < 6 && rawboard[x + 1][y] == -color)
+        {
+            x_tmp = x + 2;
+            y_tmp = y;
+
+            while (x_tmp < 7 && rawboard[x_tmp][y_tmp] == -color)
+            {
+                x_tmp += 1;
+            }
+
+            if (rawboard[x_tmp][y_tmp] == color)
+            {
+                dir = dir | LOWER;
+            }
+        }
+
+        //右上
+        if (x > 1 && y < 6 && rawboard[x - 1][y + 1] == -color)
+        {
+            x_tmp = x - 2;
+            y_tmp = y + 2;
+
+            while (x_tmp >0 && y_tmp < 7 && rawboard[x_tmp][y_tmp] == -color)
+            {
+                x_tmp -= 1;
+                y_tmp += 1;
+            }
+
+            if (rawboard[x_tmp][y_tmp] == color)
+            {
+                dir = dir | UPPER_RIGHT;
+            }
+        }
+
+        //右下
+        if (x < 6  && y < 6 && rawboard[x + 1][y + 1] == -color)
+        {
+            x_tmp = x + 2;
+            y_tmp = y + 2;
+
+            while (x_tmp < 7 && y_tmp < 7 && rawboard[x_tmp][y_tmp] == -color)
+            {
+                x_tmp += 1;
+                y_tmp += 1;
+            }
+
+            if (rawboard[x_tmp][y_tmp] == color)
+            {
+                dir = dir | LOWER_RIGHT;
+            }
+        }
+
+        //左上
+        if (x > 1 && y > 1 && rawboard[x - 1][y - 1] == -color)
+        {
+            x_tmp = x - 2;
+            y_tmp = y - 2;
+
+            while (x_tmp > 0 && y_tmp > 0 && rawboard[x_tmp][y_tmp] == -color)
+            {
+                x_tmp -= 1;
+                y_tmp -= 1;
+            }
+
+            if (rawboard[x_tmp][y_tmp] == color)
+            {
+                dir = dir | UPPER_LEFT;
+            }
+        }
+
+        //左下
+        if (x < 6 && y > 1 && rawboard[x + 1][y - 1] == -color)
+        {
+            x_tmp = x + 2;
+            y_tmp = y - 2;
+
+            while (x_tmp < 7 && y_tmp > 0 && rawboard[x_tmp][y_tmp] == -color)
+            {
+                x_tmp += 1;
+                y_tmp -= 1;
+            }
+
+            if (rawboard[x_tmp][y_tmp] == color)
+            {
+                dir = dir | LOWER_LEFT;
+            }
+        }
+        return dir;     
+    }
+
+    private void flipDiscs(int x, int y)
+    {
+        int x_tmp, y_tmp;
+        int dir;
+
+        //石を置く
+        rawboard[x][y] = CurrentColor;
+
+        dir = MovableDir[x][y];
+        
+        //右
+        if ((dir & RIGHT) != 0)
+        {
+            y_tmp = y + 1;
+            while (rawboard[x][y_tmp] == -CurrentColor)
+            {
+                rawboard[x][y_tmp] = CurrentColor;
+                y_tmp += 1;
+            }
+        }
+
+        //左
+        if ((dir & LEFT) != 0)
+        {
+            y_tmp = y - 1;
+            while (rawboard[x][y_tmp] == -CurrentColor)
+            {
+                rawboard[x][y_tmp] = CurrentColor;
+                y_tmp -= 1;
+            }
+        }
+
+        //上
+        if ((dir & UPPER) != 0)
+        {
+            x_tmp = x - 1;
+            while (rawboard[x_tmp][y] == -CurrentColor)
+            {
+                rawboard[x_tmp][y] = CurrentColor;
+                x_tmp -= 1;
+            }
+        }
+
+        //下
+        if ((dir & LOWER) != 0)
+        {
+            x_tmp = x + 1;
+            while (rawboard[x_tmp][y] == -CurrentColor)
+            {
+                rawboard[x_tmp][y] = CurrentColor;
+                x_tmp += 1;
+            }
+        }
+
+        //右上
+        if ((dir & UPPER_RIGHT) != 0)
+        {
+            x_tmp = x - 1;
+            y_tmp = y + 1;
+            while (rawboard[x_tmp][y_tmp] == -CurrentColor)
+            {
+                rawboard[x_tmp][y_tmp] = CurrentColor;
+                x_tmp -= 1;
+                y_tmp += 1;
+            }
+        }
+
+        //右下
+        if ((dir & LOWER_RIGHT) != 0)
+        {
+            x_tmp = x + 1;
+            y_tmp = y + 1;
+            while (rawboard[x_tmp][y_tmp] == -CurrentColor)
+            {
+                rawboard[x_tmp][y_tmp] = CurrentColor;
+                x_tmp += 1;
+                y_tmp += 1;
+            }
+        }
+
+        //左上
+        if ((dir & UPPER_LEFT) != 0)
+        {
+            x_tmp = x - 1;
+            y_tmp = y - 1;
+            while (rawboard[x_tmp][y_tmp] == -CurrentColor)
+            {
+                rawboard[x_tmp][y_tmp] = CurrentColor;
+                x_tmp -= 1;
+                y_tmp -= 1;
+            }
+        }
+
+        //左下
+        if ((dir & LOWER_LEFT) != 0)
+        {
+            x_tmp = x + 1;
+            y_tmp = y - 1;
+            while (rawboard[x_tmp][y_tmp] == -CurrentColor)
+            {
+                rawboard[x_tmp][y_tmp] = CurrentColor;
+                x_tmp += 1;
+                y_tmp -= 1;
+            }
+        }
+    }
+    public void move(int x, int y)
+    {
+        if (x < 0 || x > 7) return;
+        if (y < 0 || y > 7) return;
+        if (MovablePos[x][y] == false) return;
+
+        flipDiscs(x, y);
+
+        Tunrs += 1;
+
+        CurrentColor *= -1;
+
+        updateMovable();
+    }
+}
+
