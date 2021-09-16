@@ -11,30 +11,23 @@ class Board
     private static int LOWER = 64;
     private static int LOWER_LEFT = 128;
 
-    public int[][] rawboard;
-    public int[][] MovableDir;
-    public bool[][] MovablePos;
+    public int[] rawboard;
+    public int[] MovableDir;
+    public bool[] MovablePos;
 
     public int Tunrs;
     public int CurrentColor;
 
     public Board()
     {
-        rawboard = new int[8][];
-        MovableDir = new int[8][];
-        MovablePos = new bool[8][];
+        rawboard = new int[64];
+        MovableDir = new int[64];
+        MovablePos = new bool[64];
 
-        foreach (int i in Enumerable.Range(0, 8))
-        {
-            rawboard[i] = new int[8];
-            MovableDir[i] = new int[8];
-            MovablePos[i] = new bool[8];
-        }
-
-        rawboard[3][3] = -1;
-        rawboard[4][4] = -1;
-        rawboard[3][4] = 1;
-        rawboard[4][3] = 1;
+        rawboard[27] = -1;
+        rawboard[36] = -1;
+        rawboard[28] = 1;
+        rawboard[35] = 1;
 
         Tunrs = 0;
         CurrentColor = 1;
@@ -43,61 +36,51 @@ class Board
     }
     private void updateMovable()
     {
-        foreach(int i in Enumerable.Range(0, 8))
+        foreach (int i in Enumerable.Range(0, 64))
         {
-            foreach(int j in Enumerable.Range(0, 8))
+            MovablePos[i] = false;
+            int dir = checkMobility(i, CurrentColor);
+            MovableDir[i] = dir;
+            if (dir != 0)
             {
-                MovablePos[i][j] = false;
-                int dir = checkMobility(i, j, CurrentColor);
-                MovableDir[i][j] = dir;
-                if (dir != 0)
-                {
-                    MovablePos[i][j] = true;
-                }
+                MovablePos[i] = true;
             }
+
         }
     }
 
-    private int checkMobility(int x , int y, int color)
+    private int checkMobility(int x ,int color)
     {
-        int x_tmp, y_tmp;
+        int x_tmp;
         int dir = 0;
 
         //すでに石があればダメ
-        if (rawboard[x][y] != 0) return dir;
+        if (rawboard[x] != 0) return dir;
 
         //右
-        if(y < 6 && rawboard[x][y+1] == -color)
+        if(x % 8 < 6 && rawboard[x + 1] == -color)
         {
-            x_tmp = x;
-            y_tmp = y + 2;
+            x_tmp = x + 2;
 
-            while(y_tmp < 7 && rawboard[x_tmp][y_tmp] == -color)
+            while(x_tmp % 8 < 7 && rawboard[x_tmp] == -color)
             {
-                y_tmp += 1;
+                x_tmp += 1;
             }
 
-            if(rawboard[x_tmp][y_tmp] == color)
-            {
-                dir = dir | RIGHT;
-            }
+            if(rawboard[x_tmp] == color) dir = dir | RIGHT;
         }
 
         //左
-        if (y > 1 && rawboard[x][y - 1] == -color)
+        if (x % 8 > 1 && rawboard[x - 1] == -color)
         {
-            x_tmp = x;
-            y_tmp = y - 2;
+            x_tmp = x - 2;
 
-            while (y_tmp >0 && rawboard[x_tmp][y_tmp] == -color)
+            while (x_tmp % 8 > 0 && rawboard[x_tmp] == -color)
             {
-                y_tmp -= 1;
+                x_tmp -= 1;
             }
 
-            if (rawboard[x_tmp][y_tmp] == color)
-            {
-                dir = dir | LEFT;
-            }
+            if (rawboard[x_tmp] == color) dir = dir | LEFT;
         }
 
         //上
