@@ -18,7 +18,8 @@ class Board
 
     public int[] rawboard;
     public int[] MovableDir;
-    public bool[] MovablePos;
+//    public bool[] MovablePos;
+    public List<int> MovablePos = new List<int>();
 
     public int Tunrs;
     public int CurrentColor;
@@ -27,7 +28,6 @@ class Board
     {
         rawboard = new int[64];
         MovableDir = new int[64];
-        MovablePos = new bool[64];
 
         rawboard[27] = -1;
         rawboard[36] = -1;
@@ -41,16 +41,15 @@ class Board
     }
     private void updateMovable()
     {
+        MovablePos.Clear();
         foreach (int i in Enumerable.Range(0, 64))
         {
-            MovablePos[i] = false;
             int dir = checkMobility(i, CurrentColor);
             MovableDir[i] = dir;
             if (dir != 0)
             {
-                MovablePos[i] = true;
+                MovablePos.Add(i);
             }
-
         }
     }
 
@@ -261,7 +260,7 @@ class Board
     public void move(int x)
     {
         if (x < 0 || x > 64) return;
-        if (MovablePos[x] == false) return;
+        if (!MovablePos.Contains(x)) return;
 
         flipDiscs(x);
 
