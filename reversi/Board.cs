@@ -292,6 +292,7 @@ class Board
             }
             Console.WriteLine();
         }
+        Console.WriteLine(String.Join(" ", MovablePos));
     }
 }
 
