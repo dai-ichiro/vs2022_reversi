@@ -280,7 +280,6 @@ class Board
                 Console.Write($" {mark[rawboard[i * 8 + j]]} ");
 
             }
-//            Console.WriteLine();
             Console.WriteLine();
         }
 
