@@ -7,7 +7,7 @@ class Program
         Board board = new Board();
 
         board.display();
-        int[] moves = { 26, 18 };
+        int[] moves = { 26, 18, 10 };
 
         foreach(int each_move in moves)
         {

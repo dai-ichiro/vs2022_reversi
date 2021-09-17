@@ -277,10 +277,10 @@ class Board
         {
             foreach (int j in Enumerable.Range(0, 8))
             {
-                Console.Write($" {mark[rawboard[i * 8 + j]]}  ");
+                Console.Write($" {mark[rawboard[i * 8 + j]]} ");
 
             }
-            Console.WriteLine();
+//            Console.WriteLine();
             Console.WriteLine();
         }
 
@@ -288,7 +288,7 @@ class Board
         {
             foreach (int j in Enumerable.Range(0, 8))
             {
-                Console.Write($"{MovableDir[i * 8 + j]:000} ");
+                Console.Write(String.Format("{0,3}", MovableDir[i * 8 + j]));
             }
             Console.WriteLine();
         }
