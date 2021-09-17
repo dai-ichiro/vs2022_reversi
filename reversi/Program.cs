@@ -6,13 +6,17 @@ class Program
     {
         Board board = new Board();
 
-        board.move(26);
-        board.move(18);
-        board.move(19);
-        board.move(34);
-        board.move(41);
-
         board.display();
+        int[] moves = { 26, 18 };
+
+        foreach(int each_move in moves)
+        {
+            Console.ReadKey();
+            Console.SetCursorPosition(0, 0);
+            board.move(each_move);
+            board.display();
+        }
+
     }
 }
 

@@ -4,9 +4,7 @@ class Board
 {
     private static readonly Dictionary<int, string> mark = new Dictionary<int, string>()
     {
-        {0, "." },
-        {1, "O" },
-        {-1, "X" }
+        {0, "." }, {1, "O" }, {-1, "X" }
     };
 
     private static readonly int LEFT = 1;
