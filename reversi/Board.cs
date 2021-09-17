@@ -285,7 +285,6 @@ class Board
             }
             Console.WriteLine();
             Console.WriteLine();
-
         }
 
         foreach (int i in Enumerable.Range(0, 8))
