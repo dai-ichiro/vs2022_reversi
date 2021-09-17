@@ -66,7 +66,6 @@ class Board
             {
                 x_tmp += 1;
             }
-
             if(rawboard[x_tmp] == color) dir = dir | RIGHT;
         }
 
@@ -79,147 +78,112 @@ class Board
             {
                 x_tmp -= 1;
             }
-
             if (rawboard[x_tmp] == color) dir = dir | LEFT;
         }
 
         //上
-        if (x > 1 && rawboard[x - 1][y] == -color)
+        if (x / 8 > 1 && rawboard[x - 8] == -color)
         {
-            x_tmp = x - 2;
-            y_tmp = y;
+            x_tmp = x - 16;
 
-            while (x_tmp > 0 && rawboard[x_tmp][y_tmp] == -color)
+            while (x_tmp / 8 > 0 && rawboard[x_tmp] == -color)
             {
-                x_tmp -= 1;
+                x_tmp -= 8;
             }
-
-            if (rawboard[x_tmp][y_tmp] == color)
-            {
-                dir = dir | UPPER;
-            }
+            if (rawboard[x_tmp] == color) dir = dir | UPPER;
         }
 
         //下
-        if (x < 6 && rawboard[x + 1][y] == -color)
+        if (x / 8 < 6 && rawboard[x + 8] == -color)
         {
-            x_tmp = x + 2;
-            y_tmp = y;
+            x_tmp = x + 16;
 
-            while (x_tmp < 7 && rawboard[x_tmp][y_tmp] == -color)
+            while (x_tmp / 8 < 7 && rawboard[x_tmp] == -color)
             {
-                x_tmp += 1;
+                x_tmp += 8;
             }
-
-            if (rawboard[x_tmp][y_tmp] == color)
-            {
-                dir = dir | LOWER;
-            }
+            if (rawboard[x_tmp] == color) dir = dir | LOWER;
         }
 
         //右上
-        if (x > 1 && y < 6 && rawboard[x - 1][y + 1] == -color)
+        if (x / 8 > 1 && x % 8 < 6 && rawboard[x - 7] == -color)
         {
-            x_tmp = x - 2;
-            y_tmp = y + 2;
+            x_tmp = x - 14;
 
-            while (x_tmp >0 && y_tmp < 7 && rawboard[x_tmp][y_tmp] == -color)
+            while (x_tmp / 8 >0 && x_tmp % 8 < 7 && rawboard[x_tmp] == -color)
             {
-                x_tmp -= 1;
-                y_tmp += 1;
+                x_tmp -= 7;
             }
-
-            if (rawboard[x_tmp][y_tmp] == color)
-            {
-                dir = dir | UPPER_RIGHT;
-            }
+            if (rawboard[x_tmp] == color) dir = dir | UPPER_RIGHT;
         }
 
         //右下
-        if (x < 6  && y < 6 && rawboard[x + 1][y + 1] == -color)
+        if (x / 8 < 6  && x % 8 < 6 && rawboard[x + 9] == -color)
         {
-            x_tmp = x + 2;
-            y_tmp = y + 2;
+            x_tmp = x + 18;
 
-            while (x_tmp < 7 && y_tmp < 7 && rawboard[x_tmp][y_tmp] == -color)
+            while (x_tmp /8 < 7 && x_tmp % 8 < 7 && rawboard[x_tmp] == -color)
             {
-                x_tmp += 1;
-                y_tmp += 1;
+                x_tmp += 9;
             }
-
-            if (rawboard[x_tmp][y_tmp] == color)
-            {
-                dir = dir | LOWER_RIGHT;
-            }
+            if (rawboard[x_tmp] == color) dir = dir | LOWER_RIGHT;
         }
 
         //左上
-        if (x > 1 && y > 1 && rawboard[x - 1][y - 1] == -color)
+        if (x / 8 > 1 && x % 8 > 1 && rawboard[x - 9] == -color)
         {
-            x_tmp = x - 2;
-            y_tmp = y - 2;
+            x_tmp = x - 18;
 
-            while (x_tmp > 0 && y_tmp > 0 && rawboard[x_tmp][y_tmp] == -color)
+            while (x_tmp / 8 > 0 && x_tmp % 8 > 0 && rawboard[x_tmp] == -color)
             {
-                x_tmp -= 1;
-                y_tmp -= 1;
+                x_tmp -= 9;
             }
-
-            if (rawboard[x_tmp][y_tmp] == color)
-            {
-                dir = dir | UPPER_LEFT;
-            }
+            if (rawboard[x_tmp] == color) dir = dir | UPPER_LEFT;
         }
 
         //左下
-        if (x < 6 && y > 1 && rawboard[x + 1][y - 1] == -color)
+        if (x / 8 < 6 && x % 8 > 1 && rawboard[x + 7] == -color)
         {
-            x_tmp = x + 2;
-            y_tmp = y - 2;
+            x_tmp = x + 14;
 
-            while (x_tmp < 7 && y_tmp > 0 && rawboard[x_tmp][y_tmp] == -color)
+            while (x_tmp / 8 < 7 && x_tmp % 8 > 0 && rawboard[x_tmp] == -color)
             {
-                x_tmp += 1;
-                y_tmp -= 1;
+                x_tmp += 7;
             }
-
-            if (rawboard[x_tmp][y_tmp] == color)
-            {
-                dir = dir | LOWER_LEFT;
-            }
+            if (rawboard[x_tmp] == color) dir = dir | LOWER_LEFT;
         }
         return dir;     
     }
 
-    private void flipDiscs(int x, int y)
+    private void flipDiscs(int x)
     {
-        int x_tmp, y_tmp;
+        int x_tmp;
         int dir;
 
         //石を置く
-        rawboard[x][y] = CurrentColor;
+        rawboard[x] = CurrentColor;
 
-        dir = MovableDir[x][y];
+        dir = MovableDir[x];
         
         //右
         if ((dir & RIGHT) != 0)
         {
-            y_tmp = y + 1;
-            while (rawboard[x][y_tmp] == -CurrentColor)
+            x_tmp = x + 1;
+            while (rawboard[x_tmp] == -CurrentColor)
             {
-                rawboard[x][y_tmp] = CurrentColor;
-                y_tmp += 1;
+                rawboard[x_tmp] = CurrentColor;
+                x_tmp += 1;
             }
         }
 
         //左
         if ((dir & LEFT) != 0)
         {
-            y_tmp = y - 1;
-            while (rawboard[x][y_tmp] == -CurrentColor)
+            x_tmp = y - 1;
+            while (rawboard[x_tmp] == -CurrentColor)
             {
-                rawboard[x][y_tmp] = CurrentColor;
-                y_tmp -= 1;
+                rawboard[x_tmp] = CurrentColor;
+                x_tmp -= 1;
             }
         }
 
