@@ -2,14 +2,21 @@
 
 class Board
 {
-    private static int LEFT = 1;
-    private static int UPPER_LEFT = 2;
-    private static int UPPER = 4;
-    private static int UPPER_RIGHT = 8;
-    private static int RIGHT = 16;
-    private static int LOWER_RIGHT = 32;
-    private static int LOWER = 64;
-    private static int LOWER_LEFT = 128;
+    private static readonly Dictionary<int, string> mark = new Dictionary<int, string>()
+    {
+        {0, "." },
+        {1, "O" },
+        {-1, "X" }
+    };
+
+    private static readonly int LEFT = 1;
+    private static readonly int UPPER_LEFT = 2;
+    private static readonly int UPPER = 4;
+    private static readonly int UPPER_RIGHT = 8;
+    private static readonly int RIGHT = 16;
+    private static readonly int LOWER_RIGHT = 32;
+    private static readonly int LOWER = 64;
+    private static readonly int LOWER_LEFT = 128;
 
     public int[] rawboard;
     public int[] MovableDir;
@@ -179,7 +186,7 @@ class Board
         //左
         if ((dir & LEFT) != 0)
         {
-            x_tmp = y - 1;
+            x_tmp = x - 1;
             while (rawboard[x_tmp] == -CurrentColor)
             {
                 rawboard[x_tmp] = CurrentColor;
@@ -190,90 +197,105 @@ class Board
         //上
         if ((dir & UPPER) != 0)
         {
-            x_tmp = x - 1;
-            while (rawboard[x_tmp][y] == -CurrentColor)
+            x_tmp = x - 8;
+            while (rawboard[x_tmp] == -CurrentColor)
             {
-                rawboard[x_tmp][y] = CurrentColor;
-                x_tmp -= 1;
+                rawboard[x_tmp] = CurrentColor;
+                x_tmp -= 8;
             }
         }
 
         //下
         if ((dir & LOWER) != 0)
         {
-            x_tmp = x + 1;
-            while (rawboard[x_tmp][y] == -CurrentColor)
+            x_tmp = x + 8;
+            while (rawboard[x_tmp] == -CurrentColor)
             {
-                rawboard[x_tmp][y] = CurrentColor;
-                x_tmp += 1;
+                rawboard[x_tmp] = CurrentColor;
+                x_tmp += 8;
             }
         }
 
         //右上
         if ((dir & UPPER_RIGHT) != 0)
         {
-            x_tmp = x - 1;
-            y_tmp = y + 1;
-            while (rawboard[x_tmp][y_tmp] == -CurrentColor)
+            x_tmp = x - 7;
+            while (rawboard[x_tmp] == -CurrentColor)
             {
-                rawboard[x_tmp][y_tmp] = CurrentColor;
-                x_tmp -= 1;
-                y_tmp += 1;
+                rawboard[x_tmp] = CurrentColor;
+                x_tmp -= 7;
             }
         }
 
         //右下
         if ((dir & LOWER_RIGHT) != 0)
         {
-            x_tmp = x + 1;
-            y_tmp = y + 1;
-            while (rawboard[x_tmp][y_tmp] == -CurrentColor)
+            x_tmp = x + 9;
+            while (rawboard[x_tmp] == -CurrentColor)
             {
-                rawboard[x_tmp][y_tmp] = CurrentColor;
-                x_tmp += 1;
-                y_tmp += 1;
+                rawboard[x_tmp] = CurrentColor;
+                x_tmp += 9;
             }
         }
 
         //左上
         if ((dir & UPPER_LEFT) != 0)
         {
-            x_tmp = x - 1;
-            y_tmp = y - 1;
-            while (rawboard[x_tmp][y_tmp] == -CurrentColor)
+            x_tmp = x - 9;
+            while (rawboard[x_tmp] == -CurrentColor)
             {
-                rawboard[x_tmp][y_tmp] = CurrentColor;
-                x_tmp -= 1;
-                y_tmp -= 1;
+                rawboard[x_tmp] = CurrentColor;
+                x_tmp -= 9;
             }
         }
 
         //左下
         if ((dir & LOWER_LEFT) != 0)
         {
-            x_tmp = x + 1;
-            y_tmp = y - 1;
-            while (rawboard[x_tmp][y_tmp] == -CurrentColor)
+            x_tmp = x + 7;
+            while (rawboard[x_tmp] == -CurrentColor)
             {
-                rawboard[x_tmp][y_tmp] = CurrentColor;
-                x_tmp += 1;
-                y_tmp -= 1;
+                rawboard[x_tmp] = CurrentColor;
+                x_tmp += 7;
             }
         }
     }
-    public void move(int x, int y)
+    public void move(int x)
     {
-        if (x < 0 || x > 7) return;
-        if (y < 0 || y > 7) return;
-        if (MovablePos[x][y] == false) return;
+        if (x < 0 || x > 64) return;
+        if (MovablePos[x] == false) return;
 
-        flipDiscs(x, y);
+        flipDiscs(x);
 
         Tunrs += 1;
 
         CurrentColor *= -1;
 
         updateMovable();
+    }
+
+    public void display()
+    {
+        foreach (int i in Enumerable.Range(0, 8))
+        {
+            foreach (int j in Enumerable.Range(0, 8))
+            {
+                Console.Write($" {mark[rawboard[i * 8 + j]]}  ");
+
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+
+        }
+
+        foreach (int i in Enumerable.Range(0, 8))
+        {
+            foreach (int j in Enumerable.Range(0, 8))
+            {
+                Console.Write($"{MovableDir[i * 8 + j]:000} ");
+            }
+            Console.WriteLine();
+        }
     }
 }
 
