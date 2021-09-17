@@ -7,16 +7,15 @@ class Program
         Board board = new Board();
 
         board.display();
-        int[] moves = { 26, 18, 10 };
+        int[] moves = { 19, 18, 17, 11, 4, 43, 51, 20, 29 };
 
         foreach(int each_move in moves)
         {
             Console.ReadKey();
-            Console.SetCursorPosition(0, 0);
+            Console.Clear();
             board.move(each_move);
             board.display();
         }
-
     }
 }
 
