@@ -71,6 +71,11 @@ class Board
         return (m >> 8) & vertical_watcher;
     }
 
+    private UInt64 lower_direction_transfer(UInt64 m)
+    {
+        return (m << 8) & vertical_watcher;
+    }
+
     public List<(int, UInt64)> update_possiblePos(UInt64 turn, UInt64 not_turn)
     {
         UInt64 mask;
@@ -88,7 +93,6 @@ class Board
 
             rev = 0;
 
-            
             //右方向チェック
             tmp = 0;
             mask = right_direction_transfer(check_position);
@@ -110,13 +114,23 @@ class Board
             }
             if ((mask & turn) != 0) rev |= tmp;
 
-            //左方向チェック
+            //上方向チェック
             tmp = 0;
             mask = upper_direction_transfer(check_position);
             while (mask != 0 && (mask & not_turn) != 0)
             {
                 tmp |= mask;
                 mask = upper_direction_transfer(mask);
+            }
+            if ((mask & turn) != 0) rev |= tmp;
+
+            //下方向チェック
+            tmp = 0;
+            mask = lower_direction_transfer(check_position);
+            while (mask != 0 && (mask & not_turn) != 0)
+            {
+                tmp |= mask;
+                mask = lower_direction_transfer(mask);
             }
             if ((mask & turn) != 0) rev |= tmp;
 
