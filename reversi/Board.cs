@@ -10,46 +10,42 @@ class Board
     public UInt64 black;
     public UInt64 white;
 
-    public Dictionary<int, UInt64> possiblePos = new Dictionary<int, UInt64>();
+    public List<(int, UInt64)> possiblePos = new List<(int, UInt64)>();
 
-    public int Turns;
     public int CurrentColor;
 
-    public Board()
+    public Board(UInt64 black_stone, UInt64 white_stone, int turn)
     {
-        black = 0;
-        white = 0;
+        black = black_stone;
+        white = white_stone;
 
-        black |= init << 28;
-        black |= init << 35;
+        CurrentColor = turn;
 
-        white |= init << 27;
-        white |= init << 36;
-
-        Turns = 0;
-        CurrentColor = 1;
-
-        update_possiblePos(black, white);
-    }
-    public void move(int x)
-    {
-        if (!(possiblePos.ContainsKey(x))) return;
-
-        if(CurrentColor == 1)
+        if (CurrentColor == 1)
         {
-            black |= (init << x | possiblePos[x]);
-            white ^= possiblePos[x];
-            update_possiblePos(white, black);
+            update_possiblePos(black, white);
         }
         else
         {
-            white |= (init << x | possiblePos[x]);
-            black ^= possiblePos[x];
-            update_possiblePos(black, white);
+            update_possiblePos(white, black);
         }
+    }
 
-        Turns += 1;
+    public Board move(int x, UInt64 rev)
+    {
+        if(CurrentColor == 1)
+        {
+            black ^= (init << x | rev);
+            white ^= rev;
+        }
+        else
+        {
+            white ^= (init << x | rev);
+            black ^= rev;           
+        }
         CurrentColor *= -1;
+
+        return new Board(black, white, CurrentColor);
 
     }
 
@@ -118,7 +114,7 @@ class Board
         return (m << 7) & around_watcher;
     }
 
-    public Dictionary<int, UInt64> update_possiblePos(UInt64 turn, UInt64 not_turn)
+    public List<(int, UInt64)> update_possiblePos(UInt64 turn, UInt64 not_turn)
     {
         UInt64 mask;
         UInt64 tmp;
@@ -216,7 +212,7 @@ class Board
             }
             if ((mask & turn) != 0) rev |= tmp;
 
-            if (rev != 0) possiblePos.Add(i, rev);
+            if (rev != 0) possiblePos.Add((i, rev));
         }
         return possiblePos;
     }
