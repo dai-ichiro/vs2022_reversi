@@ -146,7 +146,6 @@ class Board
             }
             if ((mask & turn) != 0) rev |= tmp;
             
-
             //左方向チェック
             tmp = 0;
             mask = left_direction_transfer(check_position);
@@ -216,7 +215,6 @@ class Board
                 mask = lowerleft_direction_transfer(mask);
             }
             if ((mask & turn) != 0) rev |= tmp;
-
 
             if (rev != 0) possiblePos.Add(i, rev);
         }
