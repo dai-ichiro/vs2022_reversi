@@ -4,9 +4,9 @@ class Program
 {
     static void Main(string[] args)
     {
-        Search search = new Search();
+        Board board = new Board();
 
-        search.board.display();
+        board.display();
         
     }
 }
