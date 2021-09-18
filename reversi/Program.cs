@@ -8,11 +8,24 @@ class Program
 
         board.display();
 
-        Console.WriteLine(board.possiblePos.Count.ToString());
-        foreach(var x in board.possiblePos)
+        foreach(var x in board.possiblePos.Keys)
         {
-            Console.WriteLine(x.Item1);
+            Console.WriteLine(x.ToString());
         }
+
+        Console.ReadKey();
+
+        Console.Clear();
+
+        board.move(37);
+
+        board.display();
+
+        foreach (var x in board.possiblePos.Keys)
+        {
+            Console.WriteLine(x.ToString());
+        }
+
     }
 }
 
