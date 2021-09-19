@@ -3,14 +3,14 @@
 class Board
 {
     private readonly UInt64 init = 1;
-    private readonly UInt64 horizontal_watcher = Convert.ToUInt64("7E7E7E7E7E7E7E7E", 16);
-    private readonly UInt64 vertical_watcher = Convert.ToUInt64("00FFFFFFFFFFFF00", 16);
+    private readonly UInt64 right_left_watcher = Convert.ToUInt64("7E7E7E7E7E7E7E7E", 16);
+    private readonly UInt64 upper_lower_watcher = Convert.ToUInt64("00FFFFFFFFFFFF00", 16);
     private readonly UInt64 around_watcher = Convert.ToUInt64("007E7E7E7E7E7E00", 16);
 
     public UInt64 black;
     public UInt64 white;
 
-    public List<(int, UInt64)> possiblePos = new List<(int, UInt64)>();
+    public Dictionary<int, UInt64> possiblePos = new Dictionary<int, UInt64>();
 
     public int CurrentColor;
 
@@ -31,8 +31,10 @@ class Board
         }
     }
 
-    public void move(int x, UInt64 rev)
-    {
+    public Board move(int x)
+    {   
+        UInt64 rev = possiblePos[x];
+
         if(CurrentColor == 1)
         {
             black ^= ((init << x) | rev);
@@ -45,7 +47,8 @@ class Board
             black ^= rev;
             update_possiblePos(black, white);
         }
-        CurrentColor *= -1;
+
+        return new Board(black, white, CurrentColor * -1);
     }
 
     public void display()
@@ -73,46 +76,6 @@ class Board
         return true;
     }
 
-    private UInt64 right_direction_transfer(UInt64 m)
-    {
-        return (m << 1) & horizontal_watcher;
-    }
-
-    private UInt64 left_direction_transfer(UInt64 m)
-    {
-        return (m >> 1) & horizontal_watcher;
-    }
-
-    private UInt64 upper_direction_transfer(UInt64 m)
-    {
-        return (m >> 8) & vertical_watcher;
-    }
-
-    private UInt64 lower_direction_transfer(UInt64 m)
-    {
-        return (m << 8) & vertical_watcher;
-    }
-
-    private UInt64 upperright_direction_transfer(UInt64 m)
-    {
-        return (m >> 7) & around_watcher;
-    }
-
-    private UInt64 lowerright_direction_transfer(UInt64 m)
-    {
-        return (m << 9) & around_watcher;
-    }
-
-    private UInt64 upperleft_direction_transfer(UInt64 m)
-    {
-        return (m >> 9) & around_watcher;
-    }
-
-    private UInt64 lowerleft_direction_transfer(UInt64 m)
-    {
-        return (m << 7) & around_watcher;
-    }
-
     public void update_possiblePos(UInt64 turn, UInt64 not_turn)
     {
         UInt64 mask;
@@ -133,85 +96,136 @@ class Board
 
             //右方向チェック
             tmp = 0;
-            mask = right_direction_transfer(check_position);
-            while (mask != 0 && (mask & not_turn) != 0)
+            mask = check_position << 1;
+            if ((mask & right_left_watcher) != 0 && (mask & not_turn) != 0)
             {
                 tmp |= mask;
-                mask = right_direction_transfer(mask);
+                mask = mask << 1;
+                while((mask & right_left_watcher) != 0 && (mask & not_turn) != 0)
+                {
+                    tmp |= mask;
+                    mask = mask << 1;
+                }
+                if ((mask & turn) != 0) rev |= tmp;
             }
-            if ((mask & turn) != 0) rev |= tmp;
+
+            
             
             //左方向チェック
             tmp = 0;
-            mask = left_direction_transfer(check_position);
-            while (mask != 0 && (mask & not_turn) != 0)
+            mask = check_position >> 1;
+            if ((mask & right_left_watcher) != 0 && (mask & not_turn) != 0)
             {
                 tmp |= mask;
-                mask = left_direction_transfer(mask);
-            }
-            if ((mask & turn) != 0) rev |= tmp;
+                mask = mask >> 1;
 
+                while ((mask & right_left_watcher) != 0 && (mask & not_turn) != 0)
+                {
+                    tmp |= mask;
+                    mask = mask >> 1;
+                }
+                if ((mask & turn) != 0) rev |= tmp;
+            }
+
+            
             //上方向チェック
             tmp = 0;
-            mask = upper_direction_transfer(check_position);
-            while (mask != 0 && (mask & not_turn) != 0)
+            mask = check_position >> 8;
+            if ((mask & upper_lower_watcher) != 0 && (mask & not_turn) != 0)
             {
                 tmp |= mask;
-                mask = upper_direction_transfer(mask);
+                mask = mask >> 8;
+
+                while ((mask & upper_lower_watcher) != 0 && (mask & not_turn) != 0)
+                {
+                    tmp |= mask;
+                    mask = mask >> 8;
+                }
+                if ((mask & turn) != 0) rev |= tmp;
             }
-            if ((mask & turn) != 0) rev |= tmp;
 
             //下方向チェック
             tmp = 0;
-            mask = lower_direction_transfer(check_position);
-            while (mask != 0 && (mask & not_turn) != 0)
+            mask = check_position << 8;
+            if ((mask & upper_lower_watcher) != 0 && (mask & not_turn) != 0)
             {
                 tmp |= mask;
-                mask = lower_direction_transfer(mask);
-            }
-            if ((mask & turn) != 0) rev |= tmp;
+                mask = mask << 8;
 
+                while ((mask & upper_lower_watcher) != 0 && (mask & not_turn) != 0)
+                {
+                    tmp |= mask;
+                    mask = mask << 8;
+                }
+                if ((mask & turn) != 0) rev |= tmp;
+            }
+
+            
             //右上方向チェック
             tmp = 0;
-            mask = upperright_direction_transfer(check_position);
-            while (mask != 0 && (mask & not_turn) != 0)
+            mask = check_position >> 7;
+            if ((mask & around_watcher) != 0 && (mask & not_turn) != 0)
             {
                 tmp |= mask;
-                mask = upperright_direction_transfer(mask);
+                mask = mask >> 7;
+
+                while ((mask & around_watcher) != 0 && (mask & not_turn) != 0)
+                {
+                    tmp |= mask;
+                    mask = mask >> 7;
+                }
+                if ((mask & turn) != 0) rev |= tmp;
             }
-            if ((mask & turn) != 0) rev |= tmp;
 
             //右下方向チェック
             tmp = 0;
-            mask = lowerright_direction_transfer(check_position);
-            while (mask != 0 && (mask & not_turn) != 0)
+            mask = check_position << 9;
+            if ((mask & around_watcher) != 0 && (mask & not_turn) != 0)
             {
                 tmp |= mask;
-                mask = lowerright_direction_transfer(mask);
+                mask = mask << 9;
+
+                while ((mask & around_watcher) != 0 && (mask & not_turn) != 0)
+                {
+                    tmp |= mask;
+                    mask = mask << 9;
+                }
+                if ((mask & turn) != 0) rev |= tmp;
             }
-            if ((mask & turn) != 0) rev |= tmp;
 
             //左上方向チェック
             tmp = 0;
-            mask = upperleft_direction_transfer(check_position);
-            while (mask != 0 && (mask & not_turn) != 0)
+            mask = check_position >> 9;
+            if ((mask & around_watcher) != 0 && (mask & not_turn) != 0)
             {
                 tmp |= mask;
-                mask = upperleft_direction_transfer(mask);
+                mask = mask >> 9;
+
+                while ((mask & around_watcher) != 0 && (mask & not_turn) != 0)
+                {
+                    tmp |= mask;
+                    mask = mask >> 9;
+                }
+                if ((mask & turn) != 0) rev |= tmp;
             }
-            if ((mask & turn) != 0) rev |= tmp;
 
             //左下方向チェック
             tmp = 0;
-            mask = lowerleft_direction_transfer(check_position);
-            while (mask != 0 && (mask & not_turn) != 0)
+            mask = check_position << 7;
+            if ((mask & around_watcher) != 0 && (mask & not_turn) != 0)
             {
                 tmp |= mask;
-                mask = lowerleft_direction_transfer(mask);
-            }
-            if ((mask & turn) != 0) rev |= tmp;
+                mask = mask << 7;
 
-            if (rev != 0) possiblePos.Add((i, rev));
+                while ((mask & around_watcher) != 0 && (mask & not_turn) != 0)
+                {
+                    tmp |= mask;
+                    mask = mask << 7;
+                }
+                if ((mask & turn) != 0) rev |= tmp;
+            }
+            
+            if (rev != 0) possiblePos.Add(i, rev);
         }
     }
 }

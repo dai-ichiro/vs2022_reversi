@@ -4,6 +4,7 @@ class Program
 {
     static void Main(string[] args)
     {
+        string result;
         UInt64 init = 1;
         UInt64 black = 0;
         UInt64 white = 0;
@@ -18,44 +19,40 @@ class Program
 
         board.display();
 
-        foreach(var x in board.possiblePos)
-        {
-            Console.Write($" {x.Item1} ");
-        }
-        Console.WriteLine();
+        result = board.CurrentColor == 1 ? "黒" : "白";
+        Console.WriteLine($"手番は {result} ");
 
-        /*
-        //search.start_search();
+        Console.WriteLine(String.Join(" ", board.possiblePos.Keys));
 
         
-        foreach(var x in search.board.possiblePos)
+        while (true)
         {
-            Console.Write($" {x.Item1} ");
+            string input_text = Console.ReadLine();
+            if(string.IsNullOrEmpty(input_text)) break;
+
+            int output = int.TryParse(input_text, out int input) ? input : -1;
+            
+            if (board.possiblePos.ContainsKey(output))
+            {
+                board = board.move(output);
+                Console.Clear();
+
+
+                board.display();
+
+                result = board.CurrentColor == 1 ? "黒" : "白";
+                Console.WriteLine($"手番は {result} ");
+
+                Console.WriteLine(String.Join(" ", board.possiblePos.Keys));
+            }
         }
 
-        UInt64 current_move = 0;
-        foreach(var x in search.board.possiblePos)
-        {
-            if(x.Item1 == 43) current_move = x.Item2;
-        }
+        
 
-        Board new_board = search.board.move(43, current_move);
 
-        new_board.display();
 
-        foreach (var y in new_board.possiblePos)
-        {
-            Console.Write($" {y.Item1} ");
-        }
 
-        foreach (var x in search.board.possiblePos)
-        {
-            if (x.Item1 == 50) current_move = x.Item2;
-        }
 
-        new_board = new_board.move(50, current_move);
-        new_board.display();
-        */
 
     }
 }

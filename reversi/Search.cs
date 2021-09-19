@@ -23,13 +23,7 @@ class Search
 
         current_solution = new List<int> { 37 };
 
-        UInt64 tmp_move = 0;
-        foreach(var x in board.possiblePos)
-        {
-            if (x.Item1 == 37) tmp_move = x.Item2;
-        }
-
-        board.move(37, tmp_move);
+        //board.move(37, board.possiblePos[37]);
     }
 
     private bool is_solved(Board board)
