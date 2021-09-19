@@ -23,7 +23,7 @@ class Search
 
         current_solution = new List<int> { 37 };
 
-        //board.move(37, board.possiblePos[37]);
+        board = board.move(37);
     }
 
     private bool is_solved(Board board)
