@@ -109,8 +109,6 @@ class Board
                 if ((mask & turn) != 0) rev |= tmp;
             }
 
-            
-            
             //左方向チェック
             tmp = 0;
             mask = check_position >> 1;
@@ -127,7 +125,6 @@ class Board
                 if ((mask & turn) != 0) rev |= tmp;
             }
 
-            
             //上方向チェック
             tmp = 0;
             mask = check_position >> 8;
@@ -160,7 +157,6 @@ class Board
                 if ((mask & turn) != 0) rev |= tmp;
             }
 
-            
             //右上方向チェック
             tmp = 0;
             mask = check_position >> 7;
