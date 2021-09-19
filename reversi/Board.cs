@@ -31,22 +31,21 @@ class Board
         }
     }
 
-    public Board move(int x, UInt64 rev)
+    public void move(int x, UInt64 rev)
     {
         if(CurrentColor == 1)
         {
-            black ^= (init << x | rev);
+            black ^= ((init << x) | rev);
             white ^= rev;
+            update_possiblePos(white, black);
         }
         else
         {
             white ^= (init << x | rev);
-            black ^= rev;           
+            black ^= rev;
+            update_possiblePos(black, white);
         }
         CurrentColor *= -1;
-
-        return new Board(black, white, CurrentColor);
-
     }
 
     public void display()
@@ -114,7 +113,7 @@ class Board
         return (m << 7) & around_watcher;
     }
 
-    public List<(int, UInt64)> update_possiblePos(UInt64 turn, UInt64 not_turn)
+    public void update_possiblePos(UInt64 turn, UInt64 not_turn)
     {
         UInt64 mask;
         UInt64 tmp;
@@ -128,7 +127,7 @@ class Board
             //空きマスが「0」で表されているUInt64と着手箇所との比較
             //空白でなければcontinue
             UInt64 check_position = init << i;
-            if (((black | white) & (check_position)) != 0) continue;
+            if (((turn | not_turn) & (check_position)) != 0) continue;
 
             rev = 0;
 
@@ -214,7 +213,6 @@ class Board
 
             if (rev != 0) possiblePos.Add((i, rev));
         }
-        return possiblePos;
     }
 }
 
