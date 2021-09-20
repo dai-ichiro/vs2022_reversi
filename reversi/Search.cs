@@ -6,6 +6,7 @@ class Search
 {
     public List<int> current_solution;
     public Board board;
+    bool is_finished = false;
 
     public Search()
     {
@@ -32,17 +33,24 @@ class Search
         return false;
     }
 
-    public bool depth_limited_search(Board board, int depth)
+    public void depth_limited_search(Board board, int depth)
     {
-        if (depth == 0) return is_solved(board) ? true : false;
+        if (depth == 0 && is_solved(board)) 
+        {
+            Console.WriteLine(String.Join(" ", current_solution));
+            is_finished = true;
+            return;
+        }
 
+        if (depth == 0) return;
+        
         foreach(var x in board.possiblePos.Keys)
         {
             current_solution.Add(x);
-            if(depth_limited_search(board.move(x), depth -1)) return true;
+            depth_limited_search(board.move(x), depth - 1);
             current_solution.RemoveAt(current_solution.Count - 1);
         }
-        return false;
+        return;
     }
 
     public void start_search()
@@ -50,9 +58,9 @@ class Search
         for (int depth = 1; depth < 20; depth++)
         {
             Console.WriteLine($"Start searching length {depth + 1}");
-            if (depth_limited_search(board, depth)) break;
+            depth_limited_search(board, depth);
+            if (is_finished == true) break;
         }
-        Console.WriteLine(string.Join(" ", current_solution));
     }
 }
 
