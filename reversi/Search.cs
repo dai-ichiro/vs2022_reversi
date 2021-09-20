@@ -10,15 +10,8 @@ class Search
 
     public Search()
     {
-        UInt64 init = 1;
-        UInt64 black = 0;
-        UInt64 white = 0;
-
-        black |= init << 28;
-        black |= init << 35;
-
-        white |= init << 27;
-        white |= init << 36;
+        UInt64 black = Convert.ToUInt64("0000000810000000", 16);
+        UInt64 white = Convert.ToUInt64("0000001008000000", 16);
 
         board = new Board(black, white, 1);
 
