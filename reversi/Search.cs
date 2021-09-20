@@ -35,15 +35,6 @@ class Search
     
     public bool depth_limited_search(Board board, int depth)
     {
-        /*
-        board.display();
-        foreach (var y in board.possiblePos)
-        {
-            Console.Write($" {y.Item1} ");
-        }
-        Console.WriteLine();
-        Console.ReadKey();
-        
         if (depth == 0) return is_solved(board) ? true : false;
 
         foreach(var x in board.possiblePos)
