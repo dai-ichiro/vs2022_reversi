@@ -34,21 +34,21 @@ class Board
     public Board move(int x)
     {   
         UInt64 rev = possiblePos[x];
+        UInt64 new_black;
+        UInt64 new_white;
 
-        if(CurrentColor == 1)
+        if (CurrentColor == 1)
         {
-            black ^= ((init << x) | rev);
-            white ^= rev;
-            update_possiblePos(white, black);
+            new_black = black ^ ((init << x) | rev);
+            new_white = white ^ rev;
         }
         else
         {
-            white ^= (init << x | rev);
-            black ^= rev;
-            update_possiblePos(black, white);
+            new_black = black ^ rev;
+            new_white = white ^ (init << x | rev);
         }
 
-        return new Board(black, white, CurrentColor * -1);
+        return new Board(new_black, new_white, CurrentColor * -1);
     }
 
     public void display()

@@ -32,18 +32,16 @@ class Search
         return false;
     }
 
-    
     public bool depth_limited_search(Board board, int depth)
     {
         if (depth == 0) return is_solved(board) ? true : false;
 
-        foreach(var x in board.possiblePos)
+        foreach(var x in board.possiblePos.Keys)
         {
-            current_solution.Add(x.Item1);
-            if(depth_limited_search(board.move(x.Item1, x.Item2), depth -1)) return true;
+            current_solution.Add(x);
+            if(depth_limited_search(board.move(x), depth -1)) return true;
             current_solution.RemoveAt(current_solution.Count - 1);
         }
-        */
         return false;
     }
 
