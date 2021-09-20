@@ -9,10 +9,9 @@ class Board
 
     public UInt64 black;
     public UInt64 white;
+    public int CurrentColor;
 
     public Dictionary<int, UInt64> possiblePos = new Dictionary<int, UInt64>();
-
-    public int CurrentColor;
 
     public Board(UInt64 black_stone, UInt64 white_stone, int turn)
     {
