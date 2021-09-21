@@ -70,11 +70,6 @@ class Board
         }
     }
 
-    public bool checkPos(int x)
-    {
-        return true;
-    }
-
     public void update_possiblePos(UInt64 turn, UInt64 not_turn)
     {
         UInt64 mask;
