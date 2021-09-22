@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace reversi;
+﻿namespace reversi;
 
 class Search
 {
