@@ -22,7 +22,7 @@ class Search
 
     private bool is_solved(Board board)
     {
-        if (BitOperations.PopCount(board.white) == 0 || BitOperations.PopCount(board.black) == 0) return true;
+        if (board.white == 0 || board.black == 0) return true;
         return false;
     }
 
