@@ -17,8 +17,6 @@ class Program
         TimeSpan ts = new TimeSpan();
         ts = sw.Elapsed;
         Console.WriteLine("Finished!({0})", ts);
-
-
     }
 }
 
